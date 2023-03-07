@@ -4,17 +4,20 @@ The command line interface
 
 import argparse
 
+from __init__ import __version__
 from rich.console import Console
 from query_api import build_url, query_api
 
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        prog="Welcome to weather-cli tools",
+        prog="weather-cli tools",
         epilog="Thanks for using weather-cli tools",
         description="Check your city weather condition in command line.",
-        add_help=True
     )
+
+    parser.version = f"weather cli v{__version__}"
+    parser.add_argument("--version", "-v", action="version")
 
     parser.add_argument("city", type=str,
                         nargs="+", help="Enter your city's name")
@@ -70,4 +73,5 @@ def format_output():
     generate_icon(api_data['weather'][0]['id'])
 
 
-format_output()
+if __name__ == '__main__':
+    format_output()
