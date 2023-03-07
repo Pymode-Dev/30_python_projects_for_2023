@@ -25,6 +25,3 @@ def query_api(url: str) -> dict:
         return result.json()
     except InternetConnectionError:
         print("No Internet Connection")
-
-
-print(query_api(build_url(["ogbomoso"])))
