@@ -3,9 +3,13 @@ The command line interface
 """
 
 import argparse
+import sys
+
+from requests import exceptions
+from rich.console import Console
+from rich.table import Table
 
 from __init__ import __version__
-from rich.console import Console
 from query_api import build_url, query_api
 
 
@@ -35,42 +39,49 @@ def get_api_data():
 
     url = build_url(args.city, args.units)
     api_data = query_api(url)
-
     return api_data
 
 
-def generate_icon(weather_id: int):
+def generate_icon(weather_id: int) -> str:
+    weather_emoji = ""
     if weather_id in range(200, 233):
-        print("⛈\n")
+        weather_emoji = "⛈"
     if weather_id in range(300, 322):
-        print("\n")
+        weather_emoji = ""
     if weather_id in range(500, 532):
-        print("🌧\n")
+        weather_emoji = "🌧"
     if weather_id in range(600, 623):
-        print("🌨\n")
+        weather_emoji = "🌨"
     if weather_id in range(701, 742):
-        print("🌫\n")
+        weather_emoji = "🌫"
     if weather_id in range(781, 782):
-        print("🌪\n")
+        weather_emoji = "🌪"
     if weather_id in range(801, 805):
-        print("☁\n")
+        weather_emoji = "☁"
+    return weather_emoji
 
 
 def format_output():
-    console = Console()
+    table = Table()
+    console = Console(emoji=True)
 
-    api_data: dict = get_api_data()
-
-    console.print(f"|Country, city", style="blue", end="\t")
-    console.print(f"Temperature", style="yellow", end="\t")
-    console.print("Description", style="green", end="\t")
-    console.print("Icon Description|", style="red", end="\n")
-    console.print("+-----------------------------------------"
-                  "----------------------+", style="white", end="\n")
-    console.print(f"|{api_data['sys']['country']}, {api_data['name']}", style="blue", end="\t")
-    console.print(f"  {api_data['main']['temp']}`{'F' if parse_args().units else 'C'}", style="yellow", end="\t")
-    console.print(f"{api_data['weather'][0]['description']}   ", style="green", overflow=True, end="\t")
-    generate_icon(api_data['weather'][0]['id'])
+    try:
+        api_data: dict = get_api_data()
+        table.add_column(f"Country, city", style="blue")
+        table.add_column(f"Temperature", style="yellow")
+        table.add_column("Description", style="green", )
+        table.add_column("Icon Description|", style="red")
+        table.add_row(f"{api_data['sys']['country']}, {api_data['name']}",
+                      f"{api_data['main']['temp']}`{'F' if parse_args().units else 'C'}",
+                      f"{api_data['weather'][0]['description']}",
+                      generate_icon(api_data['weather'][0]['id']))
+    except exceptions.ConnectionError:
+        console.print("No Internet Connection...", style="red")
+        sys.exit()
+    except KeyError:
+        console.print("City Not Found...", style="red")
+    else:
+        console.print(table)
 
 
 if __name__ == '__main__':

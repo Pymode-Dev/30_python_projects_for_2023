@@ -20,8 +20,5 @@ def build_url(city: list, metrics=False) -> str:
 
 
 def query_api(url: str) -> dict:
-    try:
-        result = requests.get(url)
-        return result.json()
-    except InternetConnectionError:
-        print("No Internet Connection")
+    result = requests.get(url)
+    return result.json()
