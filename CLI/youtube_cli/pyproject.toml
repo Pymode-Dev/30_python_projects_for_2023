@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "youtube-cli"
+version = "0.1.0"
+description = ""
+authors = ["Pymode-Dev <pymode000@gmail.com>"]
+readme = "README.md"
+packages = [{include = "youtube_cli"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pytube = "^12.1.2"
+rich = "^13.3.2"
+mypy = "^1.1.1"
+pre-commit = "^3.1.1"
+flake8 = "^6.0.0"
+black = "^23.1.0"
+pylint = "^2.17.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
